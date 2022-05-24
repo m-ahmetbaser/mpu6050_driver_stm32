@@ -13,22 +13,36 @@
 
 
 // MACROS
-#define MPU6050_ID  0x68
+#define MPU6050_ID  0x68 // AD0 bacagi low da ise --> 1101 0000 olmalı id
+#define WHO_AM_I_Memory_Adress  0x75
+// 0x68 << 1 yaptigimizda 1101 0000 elde ederiz
 
 
 
 
 // DEFINES
+typedef union{
+	struct
+	{
+		uint8_t sensor_flag   :1;
+		uint8_t who_am_I_flag :1;
+		uint8_t reserved      :6;
+	}flags;
+	uint8_t sensor_flags;
+
+}MPU6050_Flags;
+MPU6050_Flags sensor_flags;
 
 typedef struct
 {
-	uint8_t sensor_flag;
+
 }MPU6050_datas;
 MPU6050_datas sensor_datas;
 
 
 // FUNCTION PROTOTYPES
-void MPU6050_TestSensor(I2C_HandleTypeDef i2c);
+uint8_t MPU6050_TestSensor(I2C_HandleTypeDef i2c);
+uint8_t MPU6050_ReadID(I2C_HandleTypeDef i2c, uint8_t devAdress, uint8_t memAdress);
 
 
 #endif /* INC_MPU6050_H_ */

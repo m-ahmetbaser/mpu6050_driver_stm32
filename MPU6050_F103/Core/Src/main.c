@@ -92,6 +92,7 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
   MPU6050_TestSensor(hi2c1);
+  MPU6050_ReadID(hi2c1, MPU6050_ID, WHO_AM_I_Memory_Adress);
   /* USER CODE END 2 */
 
   /* Infinite loop */
