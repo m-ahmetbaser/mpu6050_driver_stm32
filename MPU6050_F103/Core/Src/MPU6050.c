@@ -8,19 +8,17 @@
 
 extern I2C_HandleTypeDef hi2c1;
 
-uint8_t MPU6050_TestSensor(I2C_HandleTypeDef i2c)
+sensor_status_enum MPU6050_TestSensor(I2C_HandleTypeDef i2c)
 {
 	HAL_StatusTypeDef sensorStatus;
-	sensorStatus  = HAL_I2C_IsDeviceReady(&i2c, (MPU6050_ID << 1), 4, 100);
+	sensorStatus  = HAL_I2C_IsDeviceReady(&i2c, (MPU6050_I2C_ADRESS_AD0 << 1), 4, 100);
 	if(sensorStatus == HAL_OK)
 	{
-		sensor_flags.flags.sensor_flag = 1;
-		return HAL_OK;
+		return SENSOR_OK;
 	}
 	else
 	{
-		sensor_flags.flags.sensor_flag = 0;
-		return HAL_ERROR;
+		return SENSOR_ERROR;
 	}
 
 
@@ -34,11 +32,81 @@ uint8_t MPU6050_ReadID(I2C_HandleTypeDef i2c, uint8_t devAdress, uint8_t memAdre
 
 	if(id_val == devAdress)
 	{
-		sensor_flags.flags.who_am_I_flag = 1;
-		return HAL_OK;
+		return id_val;
 	}
 	else {
-		sensor_flags.flags.who_am_I_flag = 0;
-		return HAL_ERROR;
+		return SENSOR_ERROR;
 	}
 }
+
+
+uint8_t sensor_read_reg_u8(I2C_HandleTypeDef i2c, uint8_t chipAdress, uint8_t regAddress) // chipadress : ad0 or ad1
+{
+	uint8_t data;
+	HAL_StatusTypeDef status;
+
+	status = HAL_I2C_Mem_Read(&i2c, (chipAdress << 1), regAddress, 1, &data, 1, 100);
+
+	if(HAL_OK != status)
+	{
+		return SENSOR_ERROR;
+	}
+	else
+	{
+		return data;
+	}
+
+}
+uint8_t sensor_read_reg_u16(I2C_HandleTypeDef i2c, uint8_t chipAdress, uint8_t regAddress)
+{
+	uint8_t data[2];
+	HAL_StatusTypeDef status;
+	uint16_t returnVal;
+
+	status = HAL_I2C_Mem_Read(&i2c, (chipAdress << 1), regAddress, 1, data, 2, 100);
+
+	if(HAL_OK != status)
+	{
+		return SENSOR_ERROR;
+	}
+	else
+	{
+		returnVal = data[0] | (data[1]<<8);
+		return returnVal;
+	}
+}
+sensor_status_enum sensor_write_reg_u8(I2C_HandleTypeDef i2c, uint8_t chipAdress, uint8_t regAddress, uint8_t value)
+{
+	HAL_StatusTypeDef status;
+
+	status = HAL_I2C_Mem_Write(&i2c, chipAdress << 1, regAddress, 1, &value , 1, 100);
+
+	if(HAL_OK != status)
+	{
+		return SENSOR_ERROR;
+	}
+	else
+	{
+		return SENSOR_OK;
+	}
+}
+sensor_status_enum sensor_write_reg_u16(I2C_HandleTypeDef i2c, uint8_t chipAdress, uint8_t regAddress, uint16_t value)
+{
+	HAL_StatusTypeDef status;
+	uint8_t data[2];
+
+	data[0] = value & 0xFF ;
+	data[1] = (value >> 8) & 0xFF;
+
+	status = HAL_I2C_Mem_Write(&i2c, chipAdress << 1, regAddress, 1, data , 1, 100);
+
+	if(HAL_OK != status)
+	{
+		return SENSOR_ERROR;
+	}
+	else
+	{
+		return SENSOR_OK;
+	}
+}
+

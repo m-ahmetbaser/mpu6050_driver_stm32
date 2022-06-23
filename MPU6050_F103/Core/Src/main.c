@@ -32,6 +32,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+uint8_t sensor_id;
 
 /* USER CODE END PD */
 
@@ -92,7 +93,7 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
   MPU6050_TestSensor(hi2c1);
-  MPU6050_ReadID(hi2c1, MPU6050_ID, WHO_AM_I_Memory_Adress);
+  sensor_id = MPU6050_ReadID(hi2c1, MPU6050_I2C_ADRESS_AD0, MPU_REG_WHO_AM_I);
   /* USER CODE END 2 */
 
   /* Infinite loop */

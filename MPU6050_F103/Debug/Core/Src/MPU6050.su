@@ -1,2 +1,6 @@
-MPU6050.c:11:9:MPU6050_TestSensor	16	static
-MPU6050.c:29:9:MPU6050_ReadID	32	static
+MPU6050.c:11:20:MPU6050_TestSensor	16	static
+MPU6050.c:27:9:MPU6050_ReadID	32	static
+MPU6050.c:43:9:sensor_read_reg_u8	32	static
+MPU6050.c:60:9:sensor_read_reg_u16	32	static
+MPU6050.c:78:20:sensor_write_reg_u8	32	static
+MPU6050.c:93:20:sensor_write_reg_u16	32	static
